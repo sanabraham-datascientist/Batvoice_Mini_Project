@@ -19,7 +19,7 @@ const routes = [
     component: AudioDetailView
   },
   {
-    path: '/api/audios/:id/update',
+    path: '/api/audios/:id/update/',
     name: 'audioupdate',
     component: AudioUpdateView
   },

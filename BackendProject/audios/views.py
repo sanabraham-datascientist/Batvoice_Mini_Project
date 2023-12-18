@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics, mixins
 from .models import Audio, AudioSegment
-from .serializers import AudioSerializer,UpdateAudioSerializer
+from .serializers import AudioSerializer,UpdateAudioSerializer,AudioSegmentSerializer
 
 
 class AudioListCreateAPIView(generics.ListCreateAPIView):
@@ -22,14 +22,14 @@ audio_list_create_view = AudioListCreateAPIView.as_view()
 
 
 class AudioUpdateAPIView(generics.UpdateAPIView):
-    queryset = Audio.objects.all()
-    serializer_class = AudioSerializer
+    queryset = AudioSegment.objects.all()
+    serializer_class = AudioSegmentSerializer
     lookup_field = "id"
 
-    def perform_update(self, serializer):
-        instance = serializer.save()
-        if not instance.description:
-            instance.content = instance.title
+    # def perform_update(self, serializer):
+    #     instance = serializer.save()
+    #     if not instance.description:
+    #         instance.content = instance.title
 
 
 audio_update_view = AudioUpdateAPIView.as_view()

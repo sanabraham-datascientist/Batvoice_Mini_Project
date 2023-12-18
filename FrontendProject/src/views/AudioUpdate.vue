@@ -40,11 +40,7 @@
               </div>
 
               <div class="flex items-center justify-between px-5 py-3">
-                <button
-                  class="px-3 py-1 text-sm text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none"
-                >
-                  Cancel
-                </button>
+             
                 <button
                   class="px-3 py-1 text-sm text-white bg-sky-600 rounded-md hover:bg-indigo-500 focus:outline-none"
                 >
@@ -103,7 +99,7 @@ export default {
               if(segment.id === id){
                 this.currentSegment = {'id':segment.id, 'transcript':segment.transcript}
               }})
-          axios.put(`/api/audios/${id}/`, this.currentSegment).then(
+          axios.put(`/api/audios/${id}/update/`, this.currentSegment).then(
           response =>{
             console.log(response.data)
             segments = this.getSegments().segments}).catch(error =>{

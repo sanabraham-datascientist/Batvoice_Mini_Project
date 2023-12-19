@@ -18,9 +18,12 @@ from django.contrib import admin
 from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
+from audios.views import login_user
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+     path('loginuser', login_user),
     path('api/audios/', include('audios.urls')),
+ 
 
 ]+ static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

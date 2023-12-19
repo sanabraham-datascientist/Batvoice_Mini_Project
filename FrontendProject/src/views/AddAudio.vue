@@ -14,14 +14,14 @@
             type=" text "
             id="title"
             name="title"
-            v-model="title"
+            v-model="audio.title"
           /><br /><br />
           <label class="text-m text-gray-600" for="customer">Customer</label>
           <input
             type="text"
             id="customer"
             name="customer"
-            v-model="customer"
+            v-model="audio.customer"
           /><br /><br />
         </div>
 
@@ -31,7 +31,7 @@
           <input
             type="file"
             id="audio"
-            name="audio"
+            name="audio.audio_file"
             @change="getFileInputValue"
           /><br /><br />
         </div>
@@ -45,13 +45,13 @@
             <textarea
               class="text-base font-medium text-navy-700 dark:text-white w-full"
               name="description"
-              v-model="description"
+              v-model="audio.description"
             >
             </textarea>
           </div>
         </div>
         <button
-          class="px-5 py-3 text-sm text-white bg-sky-600 rounded-md hover:bg-indigo-500 focus:outline-none"
+          class="px-5 py-3 text-sm text-white bg-sky-600 rounded-md hover:bg-indigo-500 focus:outline-none" type="submit"
         >
           Save
         </button>
@@ -67,7 +67,7 @@
             </h4>
           </div>
           <div class="grid grid-cols-1 gap-4 px-2 w-full"></div>
-          <input type="file" id="audio" name="audio" /><br /><br />
+          <input type="file" id="audio" name="audio"  /><br /><br />
           <button
             class="px-4 py-3 text-sm text-white bg-sky-600 rounded-md hover:bg-indigo-500 focus:outline-none"
           >
@@ -84,52 +84,44 @@ import axios from "axios";
 
 export default {
   name: "add-audio",
-  data(){
+  data() {
     return {
-      audio:{
-        title:"",
-        customer:"",
-        audio_file:"",
-        description:""
+      audio: {
+        title: "",
+        customer: "",
+        audio_file: "",
+        description: "",
       },
-    }
+    };
   },
-  methods:{
+  methods: {
     getFileInputValue(event) {
-    //get the file input value
-    const file = event.target.files;
-    //assign it
-    myFileInputValue.value = file[0]
-},
+      //get the file input value
+      const file = event.target.files;
+      //assign it
+      audio.value = file[0];
+    },
 
-async submitForm() {
-              
+    async submitForm() {
+      const audio = {
+        tite: this.title,
+        customer: this.customer,
+        audio_file: this.getFileInputValue(),
+        description: this.discription,
+      };
 
-                const audio = {
-                    tite: this.title,
-                    customer: this.customer,
-                    audio_file: this.getFileInputValue(),
-                    description: this.discription,
-                  
-                }
+      await axios
+        .post("/api/audios/admin/add", audio)
+        .then((response) => {
+          console.log('ttttttttttttt')
+          console.log(response);
 
-                await axios
-                    .post('/api/audios/', audio)
-                    .then(response => {
-                        console.log(response)
-
-                        this.$router.push('/api/audios')
-                    })
-                    .catch(error => {
-                        console.log(error)
-                    })
-
-            
-            }
-
+          this.$router.push("/api/audios");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
   },
-
-
-
 };
 </script>

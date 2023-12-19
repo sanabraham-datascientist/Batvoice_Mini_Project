@@ -14,7 +14,7 @@ class AudioSegmentInline(admin.StackedInline):
 class AudioAdmin(admin.ModelAdmin):
     inlines = [AudioSegmentInline]
     list_display = ["title"]
-    readonly_fields = ["created_at", "length", "status"]
+    readonly_fields = ["created_at", "length", "status","number_segments","updated_at"]
     raw_id_fields = ["anatator"]
 
 

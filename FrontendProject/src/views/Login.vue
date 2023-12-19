@@ -24,9 +24,9 @@
       <div class="p-12 bg-white border border-gray-200 rounded-lg">
         <form class="space-y-6" v-on:submit.prevent="submitForm">
           <div>
-            <label>E-mail</label><br />
+            <label>User Name</label><br />
             <input
-              type="email"
+              type="text"
               v-model="form.email"
               placeholder="Your e-mail address"
               class="w-full mt-2 py-4 px-6 border border-gray-200 rounded-lg"
@@ -59,9 +59,7 @@
     </div>
   </div>
 
-  <div class="max-w-7xl mx-auto grid grid-cols-2 gap-4">
-    
-  </div>
+  <div class="max-w-7xl mx-auto grid grid-cols-2 gap-4"></div>
 </template>
 
 <script>
@@ -82,50 +80,19 @@ export default {
     };
   },
   methods: {
-    ...mapActions(useUserStore, ["setTokens"]),
     ...mapActions(useUserStore, ["setUserInfo"]),
 
-    
-        async submitForm() {
-            this.errors = []
-
-            if (this.form.email === '') {
-                this.errors.push('Your e-mail is missing')
-            }
-
-            if (this.form.password === '') {
-                this.errors.push('Your password is missing')
-            }
-
-            if (this.errors.length === 0) {
-                
-                await axios
-                    .post('api/login', this.form)
-                    .then(response => {
-                        useUserStore.setToken(response.data)
-                        
-
-                        console.log(response.data.access)
-
-                        axios.defaults.headers.common["Authorization"] = "Bearer " + response.data.access;
-                    })
-                    .catch(error => {
-                        console.log(useUserStore.access)
-                        console.log('error', error)
-                    })
-                
-                await axios
-                    .get('/api/me/')
-                    .then(response => {
-                        useUserStore.setUserInfo(response.data)
-                        console.log("gggg")
-                        this.$router.push('/')
-                    })
-                    .catch(error => {
-                        console.log('error', error)
-                    })
-            }
-        }
-    }
-  }
+    async submitForm() {
+      await axios
+        .get("/api/me/")
+        .then((response) => {
+          useUserStore.setUserInfo(response.data);
+          this.$router.push("/");
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
+    },
+  },
+};
 </script>

@@ -5,13 +5,18 @@ import AudioUpdateView from '../views/AudioUpdate.vue'
 import LoginView from '../views/Login.vue'
 import SignUpView from '../views/SignUp.vue'
 import AddAudio from '../views/AddAudio.vue'
-
+import AdminView from '../views/Admin.vue'
 const routes = [
   
   {
     path: '',
     name: 'home',
     component: HomeView
+  },
+  {
+    path: '/admin',
+    name: 'admin',
+    component: AdminView
   },
    {
     path: '/api/audios/:id/',

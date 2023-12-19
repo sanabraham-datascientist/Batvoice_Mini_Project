@@ -6,6 +6,8 @@ from django.contrib.auth import get_user_model
 from django.db.models.signals import pre_save, post_save
 from django.core.exceptions import ValidationError
 from django.conf import settings
+import os
+import pydub
 import datetime, mutagen
 from django.urls import reverse
 from .validators import (
@@ -14,7 +16,7 @@ from .validators import (
     check_capital_letters,
     check_the_end_text,
 )
-
+from django.conf import settings
 User = get_user_model()
 
 
@@ -29,8 +31,8 @@ class Audio(models.Model):
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(blank=True,null=True)
     description = models.TextField(null=True, blank=True)
-
-
+    number_segments = models.IntegerField(null=True, blank=True)
+   
     @property
     def user_name(self):
         return User.objects.get(id=self.anatator.id).username
@@ -58,13 +60,31 @@ class Audio(models.Model):
 def audio_pre_save(sender, instance, *args, **kwargs):
     if instance.length is None:
         instance.length = mutagen.File(instance.audio_file).info.length
-
+    nbre, mod = divmod(instance.length, 20)
+    print(nbre,mod)
+    if mod > 8 :
+        nbre +=1
+    instance.number_segments = nbre
+ 
 
 pre_save.connect(audio_pre_save, sender=Audio)
 
+# def audio_post_save(sender, instance, created, *args, **kwargs):
+#     if created:
+#         for i in range(int(instance.number_segments)):
+#             start = i * 20 * 1000
+#             end = (i + 1) * 20 * 1000
+#             audio = pydub.AudioSegment.from_mp3(os.path.join(settings.MEDIA_ROOT,"uploads",str(instance.audio_file)))
+#             split_audio = audio[start:end]
+#             output_path = os.path.join(settings.MEDIA_ROOT,"segments",str(instance.audio_file)+f"part_{i+1}.mp3")
+#             try:
+#                 audio_segment_instance = AudioSegment.objects.create(audio=instance,audio_file=output_path)
+#             except:
+#                 pass
+# post_save.connect(audio_post_save, sender=Audio)
+
 
 class AudioSegment(models.Model):
-    # uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     audio = models.ForeignKey(Audio,related_name='segments', on_delete=models.CASCADE)
     audio_file = models.FileField(upload_to="uploads/", null=False)
     length = models.IntegerField(blank=True, null=True)

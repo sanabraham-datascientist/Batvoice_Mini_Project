@@ -1,19 +1,59 @@
+
 from rest_framework import serializers
 from .models import Audio,AudioSegment
 from rest_framework.reverse import reverse
 
+
+class AudioSegmentUpdateUser(serializers.ModelSerializer):
+
+    id = serializers.IntegerField()
+    class Meta:
+        model = AudioSegment
+        fields = ("id", "transcript")
+
+
+class AudioUpdateUser(serializers.ModelSerializer):
+
+    id = serializers.IntegerField()
+    segments = AudioSegmentUpdateUser(many=True)
+
+    class Meta:
+        model = Audio
+        fields = ['id', 'segments']
+
+
+    def create(self, validated_data):
+        segments_validated_data = validated_data.pop('segments')
+        audio_instance = Audio.objects.create(**validated_data)
+        for segment in segments_validated_data:
+            AudioSegment.objects.create(audio=audio_instance,**segment)
+        return audio_instance
+
+    # update() method does not support writable nested fields by default
+    def update(self, instance, validated_data):
+        segments_id_instances_list=[]
+        segments_validated_data = validated_data.pop('segments')
+        for segment_validated_data in segments_validated_data:
+            if "id" in segment_validated_data.keys():
+                if AudioSegment.objects.filter(id=segment_validated_data['id']).exists():
+                    segment_instance = AudioSegment.objects.get(id=segment_validated_data['id'])
+                    segment_instance.transcript= segment_validated_data.get('transcript', segment_validated_data['transcript'])
+                    segment_instance.save()
+                    segments_id_instances_list.append(segment_instance.id)
+                else: continue
+            else:
+                segment_instance = AudioSegment.objects.create(audio=instance, **segment_validated_data)
+                segments_id_instances_list.append(segment_instance.id)
+
+  
+
+        return instance
 
 class UserPublicSerializer(serializers.Serializer):
     username = serializers.CharField(read_only=True)
     id = serializers.IntegerField(read_only=True)
     is_superuser = serializers.BooleanField(read_only=True)
 
-# class AudioSerializer(serializers.Serializer):
-#     id = serializers.IntegerField(read_only=True)
-#     audiosegments = serializers.ModelSerializer()
-#     def get_audiosegments(self,obj):
-#         my_audiosegments = obj.audiosegment_set.all()
-#         return my_audiosegments
 
 class AudioInlineSerializer(serializers.Serializer):
     url = serializers.HyperlinkedIdentityField(
@@ -28,10 +68,8 @@ class AudioSegmentSerializer(serializers.ModelSerializer):
         model = AudioSegment
         fields = (
             "id",
-            "audio_file",
-            "length",
             "transcript",
-            "audio"
+        
            
         )
 
@@ -68,6 +106,8 @@ class AudioSerializer(serializers.ModelSerializer):
             "updated_by",
         ]
 
+    
+
     def get_my_user_data(self, obj):
         return {
             "username": obj.anatator.username,
@@ -87,23 +127,7 @@ class AudioSegmentSerializer(serializers.ModelSerializer):
         model = AudioSegment
         fields = (
             "id",
-            "audio_file",
-            "length",
             "transcript",
-            "audio"
            
         )
 
-class UpdateAudioSerializer(serializers.ModelSerializer):
-    segments = AudioSegmentSerializer(many=True)
-
-    class Meta:
-        model = Audio
-        fields = ['id', 'segments']
-
-    def create(self, validated_data):
-        tracks_data = validated_data.pop('tracks')
-        audio = Audio.objects.create(**validated_data)
-        for track_data in tracks_data:
-            AudioSegment.objects.create(audio=audio, **track_data)
-        return audio

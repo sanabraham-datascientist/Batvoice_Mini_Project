@@ -87,28 +87,23 @@
     <div class="main-right">
       <audio controls>
         <source src="" type="" />
-        <source src="" type=""/>
+        <source src="" type="" />
       </audio>
       <div class="mt-5">
         <router-link
-        :to="{ name: 'audioupdate', params: { id: audio.id } }"
-        class="text-sky-600 text-m hover:text-indigo-900 ml-4 mt-20 underline underline-offset-1 "
-        >Go To Transcribe</router-link
-      >
+          :to="{ name: 'audioupdate', params: { id: audio.id } }"
+          class="text-sky-600 text-m hover:text-indigo-900 ml-4 mt-20 underline underline-offset-1"
+          >Go To Transcribe</router-link
+        >
       </div>
-      
     </div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import AudioPlayer from "@/components/AudioPlayer.vue";
 export default {
   name: "audiodetail",
-  components: {
-    AudioPlayer,
-  },
   data() {
     return {
       audio: {},
@@ -124,8 +119,9 @@ export default {
         .get(`/api/audios/${id}/`)
         .then((response) => {
           this.audio = response.data;
+          console.log(this.audio);
         })
-        .catch((error) => console.log("error"));
+        .catch((error) => console.log(error));
     },
   },
 };

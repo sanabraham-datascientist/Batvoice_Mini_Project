@@ -48,7 +48,7 @@
               </router-link>
             </li>
             <li class="rounded-sm">
-              <a href="#" class="flex items-center p-2 space-x-3 rounded-md">
+              <router-link to="/admin" class="flex items-center p-2 space-x-3 rounded-md">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -64,8 +64,8 @@
                   />
                 </svg>
 
-                <span class="text-gray-100 text-xl">My Work</span>
-              </a>
+                <span class="text-gray-100 text-xl">Dashboard</span>
+              </router-link>
             </li>
 
             <li class="rounded-sm">

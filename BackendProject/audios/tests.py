@@ -11,7 +11,7 @@ class AudioTestCase(TestCase):
         self.anatator_test = User.objects.create_user("abc", password="abc123")
         self.audio_test = Audio.objects.create(
             title="this is for testing",
-            audio_file="uploads\\HealthInsurance.mp3",
+            audio_file="uploads\\Learn_English_With_MP3_Players_01.wav",
             customer="testing customer",
             anatator=self.anatator_test,
         )

@@ -2,6 +2,7 @@
 from rest_framework import serializers
 from .models import Audio,AudioSegment
 from rest_framework.reverse import reverse
+from .validators import check_character_set,check_space,check_capital_letters,check_the_end_text
 
 
 class AudioSegmentUpdateUser(serializers.ModelSerializer):
@@ -37,15 +38,11 @@ class AudioUpdateUser(serializers.ModelSerializer):
             if "id" in segment_validated_data.keys():
                 if AudioSegment.objects.filter(id=segment_validated_data['id']).exists():
                     segment_instance = AudioSegment.objects.get(id=segment_validated_data['id'])
-                    segment_instance.transcript= segment_validated_data.get('transcript', segment_validated_data['transcript'])
-                    segment_instance.save()
+                    segment_instance.transcript= segment_validated_data.get('transcript', segment_validated_data['transcript'])         
                     segments_id_instances_list.append(segment_instance.id)
-                else: continue
             else:
                 segment_instance = AudioSegment.objects.create(audio=instance, **segment_validated_data)
                 segments_id_instances_list.append(segment_instance.id)
-
-  
 
         return instance
 
